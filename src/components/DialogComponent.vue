@@ -8,7 +8,7 @@ import store from '@/store'
   computed: {
     ...mapState('partners', {
       detailInfo: (state: IPartnersState) => state.detailInfo,
-      isButtonDisabled: (state: IPartnersState) => !state.detailInfo?.city || state.detailInfo?.name || state.detailInfo?.phone
+      isButtonDisabled: (state: IPartnersState) => !state.detailInfo?.city || !state.detailInfo?.name || !state.detailInfo?.phone
     } as Record<string, any>)
   },
   methods: {
