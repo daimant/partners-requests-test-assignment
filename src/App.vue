@@ -1,6 +1,10 @@
+<script setup lang="ts">
+import TableView from '@/views/TableView.vue'
+</script>
+
 <template>
   <div id="app">
-    <router-view/>
+    <TableView/>
   </div>
 </template>
 
