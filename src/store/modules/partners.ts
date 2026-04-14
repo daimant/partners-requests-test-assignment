@@ -6,7 +6,8 @@ const state = (): IPartnersState => ({
   items: null,
   isLoading: false,
   perPage: 10,
-  displayedItems: 10
+  displayedItems: 10,
+  detailInfo: null
 })
 
 const getters = {}
@@ -21,14 +22,26 @@ const actions = {
     }
   },
 
-  fetchMorePartners ({ commit, state }: { commit: Commit, state: IPartnersState }) {
-    state.displayedItems += state.perPage
+  fetchMorePartners ({ commit }: { commit: Commit }) {
+    commit('setPagination')
+  },
+
+  showDetail ({ commit }: { commit: Commit }, id: number | null) {
+    commit('setDetail', id)
   }
 }
 
 const mutations = {
   setItems (state: IPartnersState, items: IPartner[]) {
     state.items = items
+  },
+
+  setPagination (state: IPartnersState) {
+    state.displayedItems += state.perPage
+  },
+
+  setDetail (state: IPartnersState, id: number | null) {
+    state.detailInfo = state.items?.find(item => item.id === id) || null
   }
 }
 

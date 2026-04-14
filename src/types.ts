@@ -4,6 +4,8 @@ export interface IPartner {
   city: string;
   status: string;
   createdAt: string;
+  phone: string;
+  comment: string;
 }
 
 export interface IPartnersState {
@@ -11,6 +13,7 @@ export interface IPartnersState {
   isLoading: boolean;
   perPage: number;
   displayedItems: number;
+  detailInfo: IPartner | null;
 }
 
 export interface IState {
