@@ -5,20 +5,25 @@
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### Запуск проекта
 ```
 yarn serve
 ```
 
-### Compiles and minifies for production
+### Сборка проекта
 ```
 yarn build
 ```
 
-### Lints and fixes files
+### Запуск проекта вместе с моковыми данными
 ```
-yarn lint
+yarn dev
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### Принятые решения по проекту
+
+- В проекте используется стек Vue2 + Vuex + Axios + TS.
+- Для дебаунса использовал lodash.
+- Для моковых данных используется json-server.
+- Для детальной страницы используется модалка.
+- В модалке согласно тз можно менять статус и если данные отсутствуют нельзя его сохранять (селект не активен).
