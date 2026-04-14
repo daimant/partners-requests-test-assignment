@@ -7,7 +7,8 @@ import store from '@/store'
 @Component({
   computed: {
     ...mapState('partners', {
-      detailInfo: (state: IPartnersState) => state.detailInfo
+      detailInfo: (state: IPartnersState) => state.detailInfo,
+      isButtonDisabled: (state: IPartnersState) => !state.detailInfo?.city || state.detailInfo?.name || state.detailInfo?.phone
     } as Record<string, any>)
   },
   methods: {
@@ -28,11 +29,15 @@ export default class DialogComponent extends Vue {
   <dialog v-if="detailInfo" class="dialog" id="dialog" popover>
     <h3>Детальная информация о партнере</h3>
     <p>ID: {{ detailInfo.id }}</p>
-    <p>Имя: {{ detailInfo.name }}</p>
-    <p>Город: {{ detailInfo.city }}</p>
+    <p :class="{'dialog-err': !detailInfo.name}">Имя: {{ detailInfo.name || 'Не заполнено имя' }}</p>
+    <p :class="{'dialog-err': !detailInfo.city}">Город: {{ detailInfo.city || 'Не заполнен город' }}</p>
     <div class="dialog-status-container">
       <span>Статус:</span>
-      <select :value="detailInfo.status" @change="changeStatus($event.target.value, detailInfo.id)">
+      <select
+        :value="detailInfo.status"
+        @change="changeStatus($event.target.value, detailInfo.id)"
+        :disabled="isButtonDisabled"
+      >
         <option value="">Выберите статус</option>
         <option value="Новая">Новая</option>
         <option value="В работе">В работе</option>
@@ -41,7 +46,7 @@ export default class DialogComponent extends Vue {
       </select>
     </div>
     <p>Дата создания: {{ detailInfo.createdAt }}</p>
-    <p>Телефон: {{ detailInfo.phone }}</p>
+    <p :class="{'dialog-err': !detailInfo.phone}">Телефон: {{ detailInfo.phone || 'Не заполнен телефон' }}</p>
     <p>Комментарий: {{ detailInfo.comment }}</p>
     <button @click="showDetail(null)" popovertarget="dialog">Закрыть</button>
   </dialog>
@@ -67,6 +72,10 @@ export default class DialogComponent extends Vue {
     select {
       height: 16px;
     }
+  }
+
+  &-err {
+    color: red
   }
 }
 
