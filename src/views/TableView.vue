@@ -10,12 +10,36 @@ import FiltersComponent from '@/components/FiltersComponent.vue'
   components: { DialogComponent, FiltersComponent },
   computed: {
     ...mapState('partners', {
-      partners: (state: IPartnersState) => state.items?.slice(0, state.displayedItems).filter(el => {
-        const { name, city, status } = state.filters
-        return (!name || el.name.toLowerCase().includes(name.toLowerCase())) &&
-          (!city || el.city.toLowerCase().includes(city.toLowerCase())) &&
-          (!status || el.status === status)
-      }),
+      partners: (state: IPartnersState) =>
+        state.items?.slice(0, state.displayedItems)
+          .filter(el => {
+            const { name, city, status } = state.filters
+            return (!name || el.name.toLowerCase().includes(name.toLowerCase())) &&
+              (!city || el.city.toLowerCase().includes(city.toLowerCase())) &&
+              (!status || el.status === status)
+          })
+          .sort((a, b) => {
+            if (!state.sort) return 0
+            else {
+              const [name, dir] = state.sort.split('-')
+
+              if (dir === 'asc') {
+                if (name === 'name') {
+                  return a.name > b.name ? 1 : -1
+                } else if (name === 'date') {
+                  return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+                }
+              } else {
+                if (name === 'name') {
+                  return a.name < b.name ? 1 : -1
+                } else if (name === 'date') {
+                  return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                }
+              }
+            }
+
+            return 0
+          }),
       isLoading: (state: IPartnersState) => state.isLoading,
       canFetchMore: (state: IPartnersState) => (state.items?.length || 0) > state.displayedItems,
       filters: (state: IPartnersState) => state.filters
@@ -30,6 +54,9 @@ import FiltersComponent from '@/components/FiltersComponent.vue'
     },
     clearFilters () {
       store.dispatch('partners/clearFilters')
+    },
+    sortPartners (type) {
+      store.dispatch('partners/sortPartners', type)
     }
   },
   created () {
@@ -57,10 +84,16 @@ export default class TableView extends Vue {
         <thead>
         <tr>
           <th>ID</th>
-          <th>Имя партнёра</th>
+          <th class="table-sort-cell">
+            <span>Имя партнёра</span>
+            <span class="icon" @click="sortPartners('name')">↕️</span>
+          </th>
           <th>Город</th>
           <th>Статус</th>
-          <th>Дата создания</th>
+          <th class="table-sort-cell">
+            <span>Дата создания</span>
+            <span class="icon" @click="sortPartners('date')">↕️</span>
+          </th>
           <th/>
         </tr>
         </thead>
@@ -113,6 +146,15 @@ export default class TableView extends Vue {
 
     &-more-button {
       margin: 20px;
+    }
+
+    &-sort-cell {
+      display: flex;
+      gap: 10px;
+
+      .icon {
+        cursor: pointer;
+      }
     }
   }
 }

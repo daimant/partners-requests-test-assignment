@@ -21,4 +21,5 @@ export interface IPartnersState {
   displayedItems: number;
   detailInfo: IPartner | null;
   filters: IFilters,
+  sort: string | null,
 }

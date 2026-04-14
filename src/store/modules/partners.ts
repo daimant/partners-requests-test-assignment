@@ -10,7 +10,8 @@ const state = (): IPartnersState => ({
   perPage: 10,
   displayedItems: 10,
   detailInfo: null,
-  filters: { ...initFilters }
+  filters: { ...initFilters },
+  sort: null
 })
 
 const getters = {}
@@ -43,6 +44,10 @@ const actions = {
 
   clearFilters ({ commit }: { commit: Commit }) {
     commit('setFilters', { ...initFilters })
+  },
+
+  sortPartners ({ commit }: { commit: Commit }, type: 'name' | 'date') {
+    commit('setSort', type)
   }
 }
 
@@ -69,7 +74,13 @@ const mutations = {
 
   setFilters (state: IPartnersState, filters: IFilters) {
     state.filters = filters
-    console.log(123)
+  },
+
+  setSort (state: IPartnersState, type: string) {
+    const [name, dir] = state.sort?.split('-') || ['', '']
+
+    if (!state.sort || name !== type) state.sort = `${type}-asc`
+    else state.sort = `${name}-${dir === 'asc' ? 'desc' : 'asc'}`
   }
 }
 
