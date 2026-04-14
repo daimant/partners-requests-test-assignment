@@ -4,14 +4,21 @@ import store from '@/store'
 import { mapState } from 'vuex'
 import { IPartnersState } from '@/types'
 import DialogComponent from '@/components/DialogComponent.vue'
+import FiltersComponent from '@/components/FiltersComponent.vue'
 
 @Component({
-  components: { DialogComponent },
+  components: { DialogComponent, FiltersComponent },
   computed: {
     ...mapState('partners', {
-      partners: (state: IPartnersState) => state.items?.slice(0, state.displayedItems),
+      partners: (state: IPartnersState) => state.items?.slice(0, state.displayedItems).filter(el => {
+        const { name, city, status } = state.filters
+        return (!name || el.name.toLowerCase().includes(name.toLowerCase())) &&
+          (!city || el.city.toLowerCase().includes(city.toLowerCase())) &&
+          (!status || el.status === status)
+      }),
       isLoading: (state: IPartnersState) => state.isLoading,
-      canFetchMore: (state: IPartnersState) => (state.items?.length || 0) > state.displayedItems
+      canFetchMore: (state: IPartnersState) => (state.items?.length || 0) > state.displayedItems,
+      filters: (state: IPartnersState) => state.filters
     } as Record<string, any>)
   },
   methods: {
@@ -20,6 +27,9 @@ import DialogComponent from '@/components/DialogComponent.vue'
     },
     showDetail (id: number | null) {
       store.dispatch('partners/showDetail', id)
+    },
+    clearFilters () {
+      store.dispatch('partners/clearFilters')
     }
   },
   created () {
@@ -32,49 +42,58 @@ export default class TableView extends Vue {
 </script>
 
 <template>
-  <div class="table-container">
+  <div>
     <div v-if="isLoading">Идет загрузка</div>
 
-    <div v-else-if="!partners || partners?.length === 0">Нет доступных партнеров</div>
+    <div v-else-if="!partners || partners?.length === 0">
+      <div>Нет доступных партнеров</div>
+      <button v-if="filters" @click="clearFilters" class="clear-filters-button">Сбросить фильтры</button>
+    </div>
 
-    <table v-else class="table">
-      <thead>
-      <tr>
-        <th>ID</th>
-        <th>Имя партнёра</th>
-        <th>Город</th>
-        <th>Статус</th>
-        <th>Дата создания</th>
-      </tr>
-      </thead>
+    <div v-else class="table-container">
+      <filters-component/>
 
-      <tbody>
-      <tr v-for="partner in partners" :key="partner.id">
-        <td>{{ partner.id }}</td>
-        <td>{{ partner.name }}</td>
-        <td>{{ partner.city }}</td>
-        <td>{{ partner.status }}</td>
-        <td>{{ partner.createdAt }}</td>
-        <td>
-          <button @click="showDetail(partner.id)" popovertarget="dialog">Подробнее</button>
-        </td>
-      </tr>
-      </tbody>
+      <table class="table">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Имя партнёра</th>
+          <th>Город</th>
+          <th>Статус</th>
+          <th>Дата создания</th>
+          <th/>
+        </tr>
+        </thead>
 
-      <button @click="fetchMorePartners" class="table-more-button">Загрузить еще</button>
-    </table>
+        <tbody>
+        <tr v-for="partner in partners" :key="partner.id">
+          <td>{{ partner.id }}</td>
+          <td>{{ partner.name }}</td>
+          <td>{{ partner.city }}</td>
+          <td>{{ partner.status }}</td>
+          <td>{{ partner.createdAt }}</td>
+          <td>
+            <button @click="showDetail(partner.id)" popovertarget="dialog">Подробнее</button>
+          </td>
+        </tr>
+        </tbody>
 
-    <dialog-component/>
+        <button @click="fetchMorePartners" class="table-more-button">Загрузить еще</button>
+      </table>
+
+      <dialog-component/>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 
 .table-container {
-  padding: 20px;
   height: 100vh;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 30px;
 
   .table {
     height: fit-content;
@@ -98,4 +117,7 @@ export default class TableView extends Vue {
   }
 }
 
+.clear-filters-button {
+  margin-top: 20px;
+}
 </style>

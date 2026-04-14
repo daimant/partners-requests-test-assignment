@@ -1,13 +1,16 @@
 import fetchPartnersApi from '../../api/fetchPartnersApi'
-import { IPartner, IPartnersState } from '@/types'
+import { IFilters, IPartner, IPartnersState } from '@/types'
 import { Commit } from 'vuex'
+
+const initFilters = { name: '', city: '', status: '' }
 
 const state = (): IPartnersState => ({
   items: null,
   isLoading: false,
   perPage: 10,
   displayedItems: 10,
-  detailInfo: null
+  detailInfo: null,
+  filters: { ...initFilters }
 })
 
 const getters = {}
@@ -28,6 +31,18 @@ const actions = {
 
   showDetail ({ commit }: { commit: Commit }, id: number | null) {
     commit('setDetail', id)
+  },
+
+  changeStatus ({ commit }: { commit: Commit }, payload: { status: string, id: number }) {
+    commit('setStatus', payload)
+  },
+
+  changeFilters ({ commit }: { commit: Commit }, filters: IFilters) {
+    commit('setFilters', filters)
+  },
+
+  clearFilters ({ commit }: { commit: Commit }) {
+    commit('setFilters', { ...initFilters })
   }
 }
 
@@ -42,6 +57,19 @@ const mutations = {
 
   setDetail (state: IPartnersState, id: number | null) {
     state.detailInfo = state.items?.find(item => item.id === id) || null
+  },
+
+  setStatus (state: IPartnersState, params: { status: string, id: number }) {
+    const idx = state.items?.findIndex(item => item.id === params.id)
+    if (idx != null && state.items && state.items[idx]) {
+      state.items[idx].status = params.status
+      state.detailInfo = null
+    }
+  },
+
+  setFilters (state: IPartnersState, filters: IFilters) {
+    state.filters = filters
+    console.log(123)
   }
 }
 

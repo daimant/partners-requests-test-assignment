@@ -13,6 +13,9 @@ import store from '@/store'
   methods: {
     showDetail (id: number | null) {
       store.dispatch('partners/showDetail', id)
+    },
+    changeStatus (status: string, id: number) {
+      store.dispatch('partners/changeStatus', { status, id })
     }
   }
 })
@@ -27,7 +30,16 @@ export default class DialogComponent extends Vue {
     <p>ID: {{ detailInfo.id }}</p>
     <p>Имя: {{ detailInfo.name }}</p>
     <p>Город: {{ detailInfo.city }}</p>
-    <p>Статус: {{ detailInfo.status }}</p>
+    <div class="dialog-status-container">
+      <span>Статус:</span>
+      <select :value="detailInfo.status" @change="changeStatus($event.target.value, detailInfo.id)">
+        <option value="">Выберите статус</option>
+        <option value="Новая">Новая</option>
+        <option value="В работе">В работе</option>
+        <option value="Одобрена">Одобрена</option>
+        <option value="Отклонена">Отклонена</option>
+      </select>
+    </div>
     <p>Дата создания: {{ detailInfo.createdAt }}</p>
     <p>Телефон: {{ detailInfo.phone }}</p>
     <p>Комментарий: {{ detailInfo.comment }}</p>
@@ -45,6 +57,16 @@ export default class DialogComponent extends Vue {
 
   &::backdrop {
     background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  &-status-container {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+
+    select {
+      height: 16px;
+    }
   }
 }
 

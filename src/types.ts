@@ -8,14 +8,17 @@ export interface IPartner {
   comment: string;
 }
 
+export interface IFilters {
+  name: string;
+  city: string;
+  status: string;
+}
+
 export interface IPartnersState {
   items: IPartner[] | null;
   isLoading: boolean;
   perPage: number;
   displayedItems: number;
   detailInfo: IPartner | null;
-}
-
-export interface IState {
-  partners: IPartnersState;
+  filters: IFilters,
 }
