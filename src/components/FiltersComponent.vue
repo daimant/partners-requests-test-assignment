@@ -3,6 +3,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { mapState } from 'vuex'
 import { IFilters, IPartnersState } from '@/types'
 import store from '@/store'
+import { debounce } from 'lodash'
 
 @Component({
   computed: {
@@ -11,9 +12,9 @@ import store from '@/store'
     } as Record<string, any>)
   },
   methods: {
-    changeFilters (filters: IFilters) {
+    debounceInput: debounce(function (filters: IFilters) {
       store.dispatch('partners/changeFilters', filters)
-    }
+    }, 500)
   }
 })
 
@@ -29,15 +30,15 @@ export default class DialogComponent extends Vue {
         type="text"
         placeholder="Введите название"
         :value="filters.name"
-        @input="changeFilters({...filters, name: $event.target.value})"
+        v-on:input="debounceInput({...filters, name: $event.target.value})"
       />
       <input
         type="text"
         placeholder="Введите город"
         :value="filters.city"
-        @input="changeFilters({...filters, city: $event.target.value})"
+        v-on:input="debounceInput({...filters, city: $event.target.value})"
       />
-      <select :value="filters.status" @change="changeFilters({...filters, status: $event.target.value})">
+      <select :value="filters.status" @change="debounceInput({...filters, status: $event.target.value})">
         <option value="">Выберите статус</option>
         <option value="Новая">Новая</option>
         <option value="В работе">В работе</option>
