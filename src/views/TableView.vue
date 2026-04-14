@@ -72,7 +72,9 @@ export default class TableView extends Vue {
   <div>
     <div v-if="isLoading">Идет загрузка</div>
 
-    <div v-else-if="!partners || partners?.length === 0">
+    <div v-else-if="!partners">Ошибка загрузки</div>
+
+    <div v-else-if="partners.length === 0">
       <div>Нет доступных партнеров</div>
       <button v-if="filters" @click="clearFilters" class="clear-filters-button">Сбросить фильтры</button>
     </div>

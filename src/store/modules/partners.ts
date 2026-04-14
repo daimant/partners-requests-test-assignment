@@ -6,7 +6,7 @@ const initFilters = { name: '', city: '', status: '' }
 
 const state = (): IPartnersState => ({
   items: null,
-  isLoading: false,
+  isLoading: true,
   perPage: 10,
   displayedItems: 10,
   detailInfo: null,
@@ -23,6 +23,8 @@ const actions = {
       if (res) commit('setItems', res)
     } catch (e) {
       console.error(e)
+    } finally {
+      commit('setIsLoading', false)
     }
   },
 
@@ -52,6 +54,10 @@ const actions = {
 }
 
 const mutations = {
+  setIsLoading (state: IPartnersState, isLoading: boolean) {
+    state.isLoading = isLoading
+  },
+
   setItems (state: IPartnersState, items: IPartner[]) {
     state.items = items
   },
